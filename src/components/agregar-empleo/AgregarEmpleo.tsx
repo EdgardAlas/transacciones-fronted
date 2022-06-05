@@ -1,6 +1,6 @@
 import { AxiosError } from 'axios';
 import { Form, Formik, FormikHelpers } from 'formik';
-import { useState } from 'react';
+import { useEffect } from 'react';
 import { Button } from 'react-bootstrap';
 import { PersonCircle } from 'react-bootstrap-icons';
 import { api } from '../../api';
@@ -8,57 +8,91 @@ import { notificacion } from '../../helpers/notificacion';
 import { useTransaccionContext } from '../../hooks/useTransaccionContext';
 import { Empleo, ErrorServidor } from '../../interfaces/interfaces';
 import { MyInput } from '../MyInput';
-import * as yup from 'yup';
 
-const validationSchema = yup.object({
-  empleo: yup.string().required('El empleo no puede quedar vacio'),
-});
+// const validationSchema = yup.object({
+//   empleo: yup.string().required('El empleo no puede quedar vacio'),
+// });
 
 export const AgregarEmpleo = () => {
-  const [initialValues, setInitialValues] = useState<Empleo>({
-    empleo: '',
-  });
-
   const {
     // empleos,
     agregarConsulta,
     cancelarTransaccion,
     // obtenerUsuariosCargando,
     obtenerEmpleosCargando,
+    editando,
+    setEditando,
+    empleoCreando,
+    setEmpleoCreando,
   } = useTransaccionContext();
+
+  useEffect(() => {
+    return () => {
+      setEditando(false);
+      setEmpleoCreando({
+        empleo: '',
+        id: undefined,
+      });
+    };
+  }, [setEditando, setEmpleoCreando]);
 
   const onSubmit = async (
     values: Empleo,
     formikHelpers: FormikHelpers<any>
   ) => {
     try {
-      await notificacion(api.post('/empleo', values), {
-        loading: 'Registrando empleo',
-        success: (data) => {
-          obtenerEmpleosCargando();
-          agregarConsulta(`Se inserto el empleo  ${values.empleo}`);
-          return `Empleo insertado con exito`;
-        },
-        error: (err) => {
-          const error = err as AxiosError;
-          cancelarTransaccion();
-          return (
-            (error.response?.data as ErrorServidor).error?.detail ||
-            'Ha ocurrido un error'
-          );
-        },
+      if (editando) {
+        await notificacion(api.put(`/empleo/${empleoCreando.id}`, values), {
+          loading: `Editando empleo ${empleoCreando.id}`,
+          success: (data) => {
+            setEditando(false);
+            obtenerEmpleosCargando();
+            agregarConsulta(`Se editó el empleo  ${values.empleo}`);
+            return `Empleo editado con exito`;
+          },
+          error: (err) => {
+            const error = err as AxiosError;
+            cancelarTransaccion();
+            return (
+              (error?.response?.data as ErrorServidor).mensaje ||
+              (error.response?.data as ErrorServidor).error?.detail ||
+              'Ha ocurrido un error'
+            );
+          },
+        });
+      } else {
+        await notificacion(api.post('/empleo', values), {
+          loading: `Registrando empleo`,
+          success: (data) => {
+            obtenerEmpleosCargando();
+            agregarConsulta(`Se inserto el empleo  ${values.empleo}`);
+            return `Empleo insertado con exito`;
+          },
+          error: (err) => {
+            const error = err as AxiosError;
+            cancelarTransaccion();
+            return (
+              (error?.response?.data as ErrorServidor).mensaje ||
+              (error.response?.data as ErrorServidor).error?.detail ||
+              'Ha ocurrido un error'
+            );
+          },
+        });
+      }
+      setEmpleoCreando({
+        empleo: '',
+        id: undefined,
       });
-
       formikHelpers.resetForm();
     } catch (error) {}
   };
 
   return (
     <Formik
-      initialValues={initialValues}
+      initialValues={empleoCreando}
       onSubmit={onSubmit}
       enableReinitialize
-      validationSchema={validationSchema}
+      // validationSchema={validationSchema}
     >
       {({ handleReset }) => (
         <Form className='border border-2 p-3'>
@@ -73,10 +107,19 @@ export const AgregarEmpleo = () => {
           />
 
           <div className='d-flex gap-3 justify-content-end mt-3'>
-            <Button variant='secondary' onClick={handleReset}>
+            <Button
+              variant='secondary'
+              onClick={() => {
+                setEditando(false);
+                setEmpleoCreando({
+                  empleo: '',
+                  id: undefined,
+                });
+              }}
+            >
               Limpiar
             </Button>
-            <Button type='submit'>Guardar</Button>
+            <Button type='submit'>{editando ? 'Editar' : 'Guardar'}</Button>
           </div>
         </Form>
       )}

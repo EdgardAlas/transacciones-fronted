@@ -19,16 +19,19 @@ export type TUsuarios = Usuario[];
 
 export type TEmpleo = Empleo[];
 
-export interface movimiento {
+export interface Movimiento {
   id?: number;
   tipo?: string;
   monto?: number;
-  feha?: Date;
+  fecha?: Date;
   usuario_id?: number;
 }
 
+export type Movimientos = Movimiento[];
+
 export interface ErrorServidor {
   error?: Error;
+  mensaje?: string;
 }
 
 export interface Error {

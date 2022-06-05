@@ -5,7 +5,7 @@ import { ArrowClockwise, Pencil, Trash } from 'react-bootstrap-icons';
 import { api } from '../../api';
 import { notificacion } from '../../helpers/notificacion';
 import { useTransaccionContext } from '../../hooks/useTransaccionContext';
-import { ErrorServidor } from '../../interfaces/interfaces';
+import { Empleo, ErrorServidor } from '../../interfaces/interfaces';
 
 export const TablaEmpleo = () => {
   const {
@@ -13,6 +13,8 @@ export const TablaEmpleo = () => {
     agregarConsulta,
     cancelarTransaccion,
     obtenerEmpleosCargando,
+    setEmpleoCreando,
+    setEditando,
   } = useTransaccionContext();
 
   const eliminarEmpleo = async (id: number) => {
@@ -28,6 +30,7 @@ export const TablaEmpleo = () => {
           cancelarTransaccion();
           const err = error as AxiosError;
           return (
+            (err?.response?.data as ErrorServidor).mensaje ||
             (err.response?.data as ErrorServidor).error?.detail ||
             'Ha ocurrido un error'
           );
@@ -74,7 +77,38 @@ export const TablaEmpleo = () => {
                 <td>{empleo.empleo}</td>
                 <td>
                   <div className='d-flex gap-2'>
-                    <Button variant='warning'>
+                    <Button
+                      variant='warning'
+                      onClick={async () => {
+                        try {
+                          notificacion(
+                            api.get<Empleo>(`/empleo/${empleo.id}`),
+                            {
+                              loading: 'Consultando usuario',
+                              success: ({ data }) => {
+                                agregarConsulta(
+                                  `Se consulto el empleo con id ${empleo.id}`
+                                );
+                                setEmpleoCreando(data);
+                                setEditando(true);
+                                return `Empleo con id ${empleo.id} cargado con exito`;
+                              },
+                              error: (err) => {
+                                const error = err as AxiosError;
+                                cancelarTransaccion();
+                                return (
+                                  (error?.response?.data as ErrorServidor)
+                                    .mensaje ||
+                                  (error.response?.data as ErrorServidor).error
+                                    ?.detail ||
+                                  'Ha ocurrido un error'
+                                );
+                              },
+                            }
+                          );
+                        } catch (error) {}
+                      }}
+                    >
                       <Pencil />
                     </Button>
                     <Button

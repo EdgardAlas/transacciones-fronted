@@ -10,9 +10,10 @@ import {
 } from 'react-bootstrap-icons';
 import { Link } from 'react-router-dom';
 import { api } from '../../api';
+import { moneda } from '../../helpers/moneda';
 import { notificacion } from '../../helpers/notificacion';
 import { useTransaccionContext } from '../../hooks/useTransaccionContext';
-import { ErrorServidor } from '../../interfaces/interfaces';
+import { ErrorServidor, Usuario } from '../../interfaces/interfaces';
 import { VerUsuario } from './VerUsuario';
 
 export const TablaUsuarios = () => {
@@ -22,6 +23,8 @@ export const TablaUsuarios = () => {
     cancelarTransaccion,
     obtenerUsuariosCargando,
     setUsuarioVer,
+    setUsuarioCreando,
+    setEditando,
   } = useTransaccionContext();
 
   const [show, setShow] = useState(false);
@@ -41,6 +44,7 @@ export const TablaUsuarios = () => {
           cancelarTransaccion();
           const err = error as AxiosError;
           return (
+            (err?.response?.data as ErrorServidor).mensaje ||
             (err.response?.data as ErrorServidor).error?.detail ||
             'Ha ocurrido un error'
           );
@@ -92,10 +96,41 @@ export const TablaUsuarios = () => {
                 </td>
                 <td>{usuario.direccion}</td>
                 <td>{usuario.correo}</td>
-                <td>${usuario.saldo}</td>
+                <td>{moneda(usuario.saldo || 0)}</td>
                 <td>
                   <div className='d-flex gap-2'>
-                    <Button variant='warning'>
+                    <Button
+                      variant='warning'
+                      onClick={async () => {
+                        try {
+                          notificacion(
+                            api.get<Usuario>(`/usuario/${usuario.id}`),
+                            {
+                              loading: 'Consultando usuario',
+                              success: ({ data }) => {
+                                agregarConsulta(
+                                  `Se consulto el usuario con id ${usuario.id}`
+                                );
+                                setUsuarioCreando(data);
+                                setEditando(true);
+                                return `Usuario con id ${usuario.id} cargado con exito`;
+                              },
+                              error: (err) => {
+                                const error = err as AxiosError;
+                                cancelarTransaccion();
+                                return (
+                                  (error?.response?.data as ErrorServidor)
+                                    .mensaje ||
+                                  (error.response?.data as ErrorServidor).error
+                                    ?.detail ||
+                                  'Ha ocurrido un error'
+                                );
+                              },
+                            }
+                          );
+                        } catch (error) {}
+                      }}
+                    >
                       <Pencil />
                     </Button>
                     <Button
@@ -104,7 +139,10 @@ export const TablaUsuarios = () => {
                     >
                       <Trash />
                     </Button>
-                    <Link to={`/12313/movimientos`} className='btn btn-info'>
+                    <Link
+                      to={`/${usuario.id}/movimientos`}
+                      className='btn btn-info'
+                    >
                       <Cash />
                     </Link>
                     <Button

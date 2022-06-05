@@ -16,7 +16,7 @@ export const TransaccionAppRouter = () => {
             <Route path='/' element={<Usuarios />} />
             <Route path='/agregar-empleo' element={<Empleo />} />
             <Route path='/:id' element={<Usuario />} />
-            <Route path='/:id/movimiento' element={<Movimientos />} />
+            <Route path='/:id/movimientos' element={<Movimientos />} />
           </Routes>
         </BrowserRouter>
       </TransaccionesProvider>

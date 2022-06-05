@@ -4,7 +4,7 @@ import { Form, InputGroup } from 'react-bootstrap';
 interface Prop {
   label: string;
   name: string;
-  placeholder: string;
+  placeholder?: string;
   autoFocus?: boolean;
   icon: React.ReactNode | string;
   children: React.ReactNode;

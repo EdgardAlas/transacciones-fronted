@@ -16,6 +16,7 @@ export const useTransaccionApp = () => {
   const [usuarios, setUsuarios] = useState<TUsuarios>([]);
   const [usuarioVer, setUsuarioVer] = useState<number>(-1);
   const [usuarioEditar, setusuarioEditar] = useState<number>(-1);
+  const [empleoEditar, setEmpleoEditar] = useState<number>(-1);
   const [empleos, setEmpleos] = useState<Empleo[]>([]);
   const [transaccionIniciada, setTransaccionIniciada] =
     useState<boolean>(false);
@@ -26,11 +27,18 @@ export const useTransaccionApp = () => {
     nombre: '',
     empleo_id: '',
   });
+  const [empleoCreando, setEmpleoCreando] = useState<Empleo>({
+    empleo: '',
+  });
+  const [editando, setEditando] = useState(false);
   const [savepoints, setSavePoints] = useState<string[]>([]);
+  const [cargarAutomaticamente, setCargarAutomaticamente] = useState(true);
 
   const cancelarTransaccion = () => {
     terminarTransaccion();
-    toast.error('Se cancelo la transacción');
+    if (transaccionIniciada) {
+      toast.error('Se cancelo la transacción');
+    }
   };
 
   const terminarTransaccion = () => {
@@ -114,7 +122,7 @@ export const useTransaccionApp = () => {
         success: ({ data }) => {
           console.log(data);
           setUsuarios(data);
-          agregarConsulta('Se seleccinaron todos los usuarios');
+          agregarConsulta('Se seleccionaron todos los usuarios');
           return 'Empleos cargados con exito';
         },
         error: (data) => 'Ha ocurrido un error al cargar los empleos',
@@ -128,7 +136,7 @@ export const useTransaccionApp = () => {
         loading: 'Cargando empleos',
         success: ({ data }) => {
           setEmpleos(data);
-          agregarConsulta('Se seleccinaron todos los empleos');
+          agregarConsulta('Se seleccionaron todos los empleos');
 
           return 'Empleos cargados con exito';
         },
@@ -172,6 +180,14 @@ export const useTransaccionApp = () => {
     setUsuarioCreando,
     usuarioVer,
     setUsuarioVer,
+    cargarAutomaticamente,
+    setCargarAutomaticamente,
+    editando,
+    setEditando,
+    setEmpleoEditar,
+    empleoEditar,
+    empleoCreando,
+    setEmpleoCreando,
   };
 };
 

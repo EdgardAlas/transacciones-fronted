@@ -1,8 +1,9 @@
+import { AxiosError } from 'axios';
 import { useCallback, useEffect, useState } from 'react';
 import { Modal } from 'react-bootstrap';
 import { api } from '../../api';
 import { useTransaccionContext } from '../../hooks/useTransaccionContext';
-import { Usuario } from '../../interfaces/interfaces';
+import { ErrorServidor, Usuario } from '../../interfaces/interfaces';
 
 interface Props {
   show: boolean;
@@ -18,7 +19,14 @@ export const VerUsuario = ({ show, close }: Props) => {
       const { data } = await api.get<Usuario>(`/usuario/${usuarioVer}`);
       agregarConsulta(`Se consulto el usuario con id ${usuarioVer}`);
       setUsuario(data);
-    } catch (error) {}
+    } catch (error) {
+      const err = error as AxiosError;
+      return (
+        (err?.response?.data as ErrorServidor).mensaje ||
+        (err?.response?.data as ErrorServidor).error?.detail ||
+        'Ha ocurrido un error'
+      );
+    }
   }, [usuarioVer, agregarConsulta]);
 
   useEffect(() => {

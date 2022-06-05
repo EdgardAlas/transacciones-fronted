@@ -3,7 +3,7 @@ import React from 'react';
 import { Button } from 'react-bootstrap';
 import {
   ArrowClockwise,
-  At,
+  Envelope,
   PersonCircle,
   PersonWorkspace,
   Plus,
@@ -18,7 +18,13 @@ export const AgregarUsuarioForm = ({
   handleReset,
   values,
 }: FormikProps<Usuario>) => {
-  const { empleos, obtenerEmpleosCargando } = useTransaccionContext();
+  const {
+    empleos,
+    obtenerEmpleosCargando,
+    editando,
+    setUsuarioCreando,
+    setEditando,
+  } = useTransaccionContext();
 
   return (
     <Form className='border border-2 p-3'>
@@ -49,7 +55,7 @@ export const AgregarUsuarioForm = ({
           label='Correo'
           placeholder='Correo'
           name='correo'
-          icon={<At />}
+          icon={<Envelope />}
         />
         <MySelect
           label='Empleo'
@@ -80,10 +86,27 @@ export const AgregarUsuarioForm = ({
       </div>
 
       <div className='d-flex gap-3 justify-content-end'>
-        <Button variant='secondary' onClick={handleReset}>
+        <Button
+          variant='secondary'
+          onClick={() => {
+            handleReset();
+            setEditando(false);
+            setUsuarioCreando({
+              id: undefined,
+              dui: '',
+              nombre: '',
+              apellido: '',
+              correo: '',
+              direccion: '',
+              empleo_id: '',
+              empleo: '',
+              saldo: undefined,
+            });
+          }}
+        >
           Limpiar
         </Button>
-        <Button type='submit'>Guardar</Button>
+        <Button type='submit'>{editando ? 'Editar' : 'Guardar'}</Button>
       </div>
     </Form>
   );
