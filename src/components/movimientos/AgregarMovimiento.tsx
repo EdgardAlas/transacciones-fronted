@@ -1,8 +1,7 @@
 import { AxiosError } from 'axios';
 import { Form, Formik, FormikHelpers } from 'formik';
-import React from 'react';
 import { Button } from 'react-bootstrap';
-import { CurrencyDollar } from 'react-bootstrap-icons';
+import { CurrencyDollar, PlusCircle, XCircle } from 'react-bootstrap-icons';
 import { api } from '../../api';
 import { notificacion } from '../../helpers/notificacion';
 import { useTransaccionContext } from '../../hooks/useTransaccionContext';
@@ -90,10 +89,20 @@ export const AgregarMovimiento = ({ id, onAgregar }: Props) => {
             </div>
 
             <div className='d-flex gap-3 justify-content-end mt-3'>
-              <Button variant='secondary' onClick={handleReset}>
-                Limpiar
+              <Button
+                variant='secondary'
+                onClick={handleReset}
+                className='d-flex gap-2 align-items-center justify-content-center'
+              >
+                <XCircle /> Cancelar
               </Button>
-              <Button type='submit'>Agregar</Button>
+              <Button
+                type='submit'
+                className='d-flex gap-2 align-items-center justify-content-center'
+              >
+                <PlusCircle />
+                Agregar
+              </Button>
             </div>
           </Form>
         )}

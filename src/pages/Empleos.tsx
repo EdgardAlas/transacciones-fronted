@@ -14,7 +14,7 @@ export const Empleo = () => {
         <Link to='/' className='btn btn-info'>
           <ArrowLeft />
         </Link>
-        Agregar empleo
+        Empleos
       </h1>
       <NivelAislamiento />
       <TransaccionIniciada />

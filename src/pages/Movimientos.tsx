@@ -72,11 +72,10 @@ export const Movimientos = () => {
   }, [agregarConsulta, id, cancelarTransaccion]);
 
   useEffect(() => {
-    let mount = true;
     (async () => {
       try {
         const { data } = await api.get<Usuario>(`/usuario/${id}`);
-        if (mount) {
+        if (!usuario) {
           agregarConsulta(`Se consulto el usuario con id ${id}`);
         }
         setUsuario(data);
@@ -97,10 +96,7 @@ export const Movimientos = () => {
         );
       }
     })();
-    return () => {
-      mount = false;
-    };
-  }, [cargarUsuario, agregarConsulta, id, navigate]);
+  }, [cargarUsuario, agregarConsulta, id, navigate, usuario]);
 
   return (
     <div>
@@ -121,7 +117,7 @@ export const Movimientos = () => {
         </div>
       ) : (
         <>
-          <div className='d-flex w-25 flex-column m-auto mb-4'>
+          <div className='d-flex w-25 flex-column mb-4 gap-2'>
             <p className='m-0'>
               <span className='fw-bold'>Nombre:</span>{' '}
               {` ${usuario?.nombre} ${usuario?.apellido}`}

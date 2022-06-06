@@ -2,6 +2,7 @@ import { AxiosError } from 'axios';
 import { useCallback, useEffect, useState } from 'react';
 import { Modal } from 'react-bootstrap';
 import { api } from '../../api';
+import { moneda } from '../../helpers/moneda';
 import { useTransaccionContext } from '../../hooks/useTransaccionContext';
 import { ErrorServidor, Usuario } from '../../interfaces/interfaces';
 
@@ -11,13 +12,15 @@ interface Props {
 }
 
 export const VerUsuario = ({ show, close }: Props) => {
-  const { usuarioVer, agregarConsulta } = useTransaccionContext();
+  const { usuarioVer, agregarConsulta, setUsuarioVer } =
+    useTransaccionContext();
   const [usuario, setUsuario] = useState<Usuario>();
 
   const cargarUsuario = useCallback(async () => {
     try {
       const { data } = await api.get<Usuario>(`/usuario/${usuarioVer}`);
       agregarConsulta(`Se consulto el usuario con id ${usuarioVer}`);
+      setUsuarioVer(-1);
       setUsuario(data);
     } catch (error) {
       const err = error as AxiosError;
@@ -27,7 +30,7 @@ export const VerUsuario = ({ show, close }: Props) => {
         'Ha ocurrido un error'
       );
     }
-  }, [usuarioVer, agregarConsulta]);
+  }, [usuarioVer, agregarConsulta, setUsuarioVer]);
 
   useEffect(() => {
     if (usuarioVer >= 0) {
@@ -60,7 +63,8 @@ export const VerUsuario = ({ show, close }: Props) => {
           <span className='fw-bold'>Empleo: </span> {usuario?.empleo}
         </p>
         <p>
-          <span className='fw-bold'>Saldo en la cuenta: </span> {usuario?.saldo}
+          <span className='fw-bold'>Saldo en la cuenta: </span>{' '}
+          {moneda(usuario?.saldo || 0)}
         </p>
       </Modal.Body>
     </Modal>

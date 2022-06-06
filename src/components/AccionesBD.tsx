@@ -1,6 +1,11 @@
 import { useState } from 'react';
 import { Button, Form, ListGroup } from 'react-bootstrap';
-import { Check } from 'react-bootstrap-icons';
+import {
+  ArrowReturnLeft,
+  Check,
+  Check2Circle,
+  PlusCircle,
+} from 'react-bootstrap-icons';
 import toast from 'react-hot-toast';
 import { api } from '../api';
 import { startsWithNumber } from '../helpers/startsWidthNumber';
@@ -82,9 +87,13 @@ export const AccionesBD = () => {
         </div>
         <div>
           <label className='d-block opacity-0'>1</label>
-          <Button disabled={!transaccionIniciada} onClick={creatSavepoint}>
-            {' '}
-            Crear{' '}
+          <Button
+            disabled={!transaccionIniciada}
+            onClick={creatSavepoint}
+            className='d-flex gap-2 align-items-center justify-content-center'
+          >
+            <PlusCircle />
+            Crear
           </Button>
         </div>
       </div>
@@ -95,11 +104,11 @@ export const AccionesBD = () => {
           <Button
             disabled={!transaccionIniciada}
             variant='success'
-            className='px-5'
             onClick={commitTransaccion}
+            className='d-flex gap-2 align-items-center justify-content-center px-5'
           >
-            {' '}
-            Commit{' '}
+            <Check2Circle />
+            Commit
           </Button>
         </div>
       </div>
@@ -127,9 +136,10 @@ export const AccionesBD = () => {
             disabled={!transaccionIniciada}
             variant='danger'
             onClick={rollbackASavepoint}
+            className='d-flex gap-2 align-items-center justify-content-center '
           >
-            {' '}
-            Rollback{' '}
+            <ArrowReturnLeft />
+            Rollback
           </Button>
         </div>
       </div>

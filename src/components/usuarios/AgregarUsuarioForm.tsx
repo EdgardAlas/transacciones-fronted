@@ -4,9 +4,12 @@ import { Button } from 'react-bootstrap';
 import {
   ArrowClockwise,
   Envelope,
+  Pencil,
   PersonCircle,
   PersonWorkspace,
   Plus,
+  PlusCircle,
+  XCircle,
 } from 'react-bootstrap-icons';
 import { Link } from 'react-router-dom';
 import { useTransaccionContext } from '../../hooks/useTransaccionContext';
@@ -103,10 +106,24 @@ export const AgregarUsuarioForm = ({
               saldo: undefined,
             });
           }}
+          className='d-flex gap-2 align-items-center justify-content-center'
         >
-          Limpiar
+          <XCircle /> Cancelar
         </Button>
-        <Button type='submit'>{editando ? 'Editar' : 'Guardar'}</Button>
+        <Button
+          type='submit'
+          className='d-flex gap-2 align-items-center justify-content-center'
+        >
+          {editando ? (
+            <>
+              <Pencil /> Editar
+            </>
+          ) : (
+            <>
+              <PlusCircle /> Guardar
+            </>
+          )}
+        </Button>
       </div>
     </Form>
   );

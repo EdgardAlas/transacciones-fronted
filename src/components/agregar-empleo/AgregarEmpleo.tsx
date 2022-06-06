@@ -2,7 +2,12 @@ import { AxiosError } from 'axios';
 import { Form, Formik, FormikHelpers } from 'formik';
 import { useEffect } from 'react';
 import { Button } from 'react-bootstrap';
-import { PersonCircle } from 'react-bootstrap-icons';
+import {
+  Pencil,
+  PersonCircle,
+  PlusCircle,
+  XCircle,
+} from 'react-bootstrap-icons';
 import { api } from '../../api';
 import { notificacion } from '../../helpers/notificacion';
 import { useTransaccionContext } from '../../hooks/useTransaccionContext';
@@ -116,10 +121,24 @@ export const AgregarEmpleo = () => {
                   id: undefined,
                 });
               }}
+              className='d-flex gap-2 align-items-center justify-content-center'
             >
-              Limpiar
+              <XCircle /> Cancelar
             </Button>
-            <Button type='submit'>{editando ? 'Editar' : 'Guardar'}</Button>
+            <Button
+              type='submit'
+              className='d-flex gap-2 align-items-center justify-content-center'
+            >
+              {editando ? (
+                <>
+                  <Pencil /> Editar
+                </>
+              ) : (
+                <>
+                  <PlusCircle /> Guardar
+                </>
+              )}
+            </Button>
           </div>
         </Form>
       )}

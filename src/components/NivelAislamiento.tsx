@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Button, Form } from 'react-bootstrap';
+import { Play } from 'react-bootstrap-icons';
 import { api } from '../api';
 import { useTransaccionContext } from '../hooks/useTransaccionContext';
 
@@ -35,7 +36,9 @@ export const NivelAislamiento = () => {
         variant='success'
         disabled={transaccionIniciada}
         onClick={iniciarTransaccion}
+        className='d-flex align-items-center gap-2'
       >
+        <Play />
         Iniciar transacción
       </Button>
     </div>
