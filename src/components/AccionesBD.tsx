@@ -101,6 +101,16 @@ export const AccionesBD = () => {
       setSavePoint('');
       return;
     }
+    if(window.location.href.includes('movimientos')){
+      cargarMovimientos();
+      cargarUsuario();
+    }else if(window.location.href.includes('empleo')){
+    obtenerEmpleos();
+    }
+    else{
+      obtenerEmpleos();
+      obtenerUsuarios();
+    }
     setSavePoint('');
     rollbackTransaccion();
   };

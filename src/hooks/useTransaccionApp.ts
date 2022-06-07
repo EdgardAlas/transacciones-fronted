@@ -58,6 +58,7 @@ export const useTransaccionApp = () => {
     try {
       await api.post('/commit');
       terminarTransaccion();
+      setSavePoints([]);
       toast.success('Se guardaron todos los cambios');
     } catch (error) {
       const err = error as AxiosError;
@@ -87,6 +88,7 @@ export const useTransaccionApp = () => {
         await api.post('/rollback');
         terminarTransaccion();
         toast.success('Se deshicieron todos los cambios');
+        setSavePoints([]);
       }
     } catch (error) {
       cancelarTransaccion();
