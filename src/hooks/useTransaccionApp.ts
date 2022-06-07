@@ -12,6 +12,8 @@ import {
 } from '../interfaces/interfaces';
 
 export const useTransaccionApp = () => {
+  
+  const [aislamiento, setAislamiento] = useState('READ COMMITTED');
   const [consultas, setConsultas] = useState<string[]>([]);
   const [usuarios, setUsuarios] = useState<TUsuarios>([]);
   const [usuarioVer, setUsuarioVer] = useState<number>(-1);
@@ -188,6 +190,8 @@ export const useTransaccionApp = () => {
     empleoEditar,
     empleoCreando,
     setEmpleoCreando,
+    aislamiento,
+    setAislamiento,
   };
 };
 

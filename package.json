@@ -28,7 +28,8 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "react-scripts build && yarn copy",
+    "copy": "rm -rf ../transacciones-backend/public && cp build/ ../transacciones-backend/public/ -r",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

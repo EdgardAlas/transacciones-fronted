@@ -96,7 +96,7 @@ export const Movimientos = () => {
         );
       }
     })();
-  }, [cargarUsuario, agregarConsulta, id, navigate, usuario]);
+  }, [id]);
 
   return (
     <div>

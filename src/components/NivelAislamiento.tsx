@@ -5,7 +5,7 @@ import { api } from '../api';
 import { useTransaccionContext } from '../hooks/useTransaccionContext';
 
 export const NivelAislamiento = () => {
-  const [aislamiento, setAislamiento] = useState('READ COMMITTED');
+  const {aislamiento,setAislamiento} = useTransaccionContext();
   const { transaccionIniciada, setTransaccionIniciada } =
     useTransaccionContext();
 
