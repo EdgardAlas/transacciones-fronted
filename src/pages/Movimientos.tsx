@@ -20,10 +20,10 @@ import {
 
 export const Movimientos = () => {
   const { id } = useParams();
-  const [usuario, setUsuario] = useState<Usuario>();
-  const [listaMovimientos, setListaMovimentos] = useState<LMovimientos>([]);
-  const [cargando, setCargando] = useState<boolean>(true);
-  const { agregarConsulta, cancelarTransaccion } = useTransaccionContext();
+  
+  const { agregarConsulta, cancelarTransaccion, usuario, setUsuario,
+    listaMovimientos, setListaMovimentos,
+    cargando, setCargando, } = useTransaccionContext();
   const navigate = useNavigate();
 
   const cargarUsuario = useCallback(async () => {

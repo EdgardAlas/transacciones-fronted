@@ -8,11 +8,15 @@ import {
   ErrorServidor,
   TEmpleo,
   TUsuarios,
+  Movimientos as LMovimientos,
   Usuario,
 } from '../interfaces/interfaces';
 
 export const useTransaccionApp = () => {
-  
+  const [usuario, setUsuario] = useState<Usuario>();
+  const [listaMovimientos, setListaMovimentos] = useState<LMovimientos>([]);
+  const [cargando, setCargando] = useState<boolean>(true);
+
   const [aislamiento, setAislamiento] = useState('READ COMMITTED');
   const [consultas, setConsultas] = useState<string[]>([]);
   const [usuarios, setUsuarios] = useState<TUsuarios>([]);
@@ -107,6 +111,7 @@ export const useTransaccionApp = () => {
     try {
       const { data } = await api.get<TUsuarios>('/usuarios');
       setUsuarios(data);
+      agregarConsulta(`Se selecionaron todos los usuarios`);
     } catch (error) {}
   };
 
@@ -114,6 +119,7 @@ export const useTransaccionApp = () => {
     try {
       const { data } = await api.get<TEmpleo>('/empleos');
       setEmpleos(data);
+      agregarConsulta(`Se seleccionaron todos los empleados`);
     } catch (error) {}
   };
 
@@ -192,6 +198,9 @@ export const useTransaccionApp = () => {
     setEmpleoCreando,
     aislamiento,
     setAislamiento,
+    usuario, setUsuario,
+    listaMovimientos, setListaMovimentos,
+    cargando, setCargando,
   };
 };
 

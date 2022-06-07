@@ -1,15 +1,23 @@
-import { useState } from 'react';
+import { AxiosError } from 'axios';
+import { useCallback, useState } from 'react';
 import { Button, Form, ListGroup } from 'react-bootstrap';
 import {
   ArrowReturnLeft,
   Check,
   Check2Circle,
   PlusCircle,
+  Windows,
 } from 'react-bootstrap-icons';
 import toast from 'react-hot-toast';
 import { api } from '../api';
+import { notificacion } from '../helpers/notificacion';
 import { startsWithNumber } from '../helpers/startsWidthNumber';
 import { useTransaccionContext } from '../hooks/useTransaccionContext';
+import {
+  ErrorServidor,
+  Movimientos as LMovimientos,
+  Usuario,
+} from '../interfaces/interfaces';
 
 export const AccionesBD = () => {
   const [savepoint, setSavePoint] = useState('');
@@ -25,7 +33,51 @@ export const AccionesBD = () => {
     setSavePoints,
     obtenerEmpleos,
     consultas,
+    usuario,
+    setUsuario,
+    listaMovimientos, setListaMovimentos,
   } = useTransaccionContext();
+
+  const cargarUsuario = useCallback(async () => {
+    try {
+      const { data } = await api.get<Usuario>(`/usuario/${usuario ? usuario.id : ""}`);
+
+      agregarConsulta(`Se consulto el usuario con id ${usuario ? usuario.id : ""}`);
+
+      setUsuario(data);
+    } catch (error) {
+      const err = error as AxiosError;
+      return (
+        (err?.response?.data as ErrorServidor).mensaje ||
+        (err?.response?.data as ErrorServidor).error?.detail ||
+        'Ha ocurrido un error'
+      );
+    }
+  }, [agregarConsulta, usuario]);
+
+  const cargarMovimientos = useCallback(async () => {
+    try {
+      await notificacion(api.get<LMovimientos>(`/movimientos/${usuario ? usuario.id : ""}`), {
+        loading: `Obteniendo movimientos`,
+        success: ({ data }) => {
+          setListaMovimentos(data);
+          agregarConsulta(
+            `Se consultaron los movimientos del usuario con id ${usuario ? usuario.id : ""}`
+          );
+          return `Movimientos cargados con exito`;
+        },
+        error: (err) => {
+          const error = err as AxiosError;
+          cancelarTransaccion();
+          return (
+            (error?.response?.data as ErrorServidor).mensaje ||
+            (error.response?.data as ErrorServidor).error?.detail ||
+            'Ha ocurrido un error'
+          );
+        },
+      });
+    } catch (error) {}
+  }, [agregarConsulta, usuario, cancelarTransaccion]);
 
   const rollbackASavepoint = async () => {
     console.log(savepoint);
@@ -36,8 +88,16 @@ export const AccionesBD = () => {
       setSavePoints((prev) => prev.filter((value, idx) => idx < indice));
 
       agregarConsulta(`Se regresó al punto ${savepoint}`);
-      obtenerUsuarios();
+      if(window.location.href.includes('movimientos')){
+        cargarMovimientos();
+        cargarUsuario();
+      }else if(window.location.href.includes('empleo')){
       obtenerEmpleos();
+      }
+      else{
+        obtenerEmpleos();
+        obtenerUsuarios();
+      }
       setSavePoint('');
       return;
     }
