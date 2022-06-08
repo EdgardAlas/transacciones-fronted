@@ -37,7 +37,7 @@ export const TablaUsuarios = () => {
         loading: 'Eliminando usuario',
         success: () => {
           agregarConsulta(`Se eliminó el usuario con id ${id}`);
-          //obtenerUsuariosCargando();
+          obtenerUsuariosCargando();
           return `Se ha eliminado el usuario con id ${id}`;
         },
         error: (error) => {

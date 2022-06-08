@@ -51,7 +51,7 @@ export const AgregarEmpleo = () => {
           loading: `Editando empleo ${empleoCreando.id}`,
           success: (data) => {
             setEditando(false);
-            //obtenerEmpleosCargando();
+            obtenerEmpleosCargando();
             agregarConsulta(`Se editó el empleo  ${values.empleo}`);
             return `Empleo editado con exito`;
           },
@@ -69,7 +69,7 @@ export const AgregarEmpleo = () => {
         await notificacion(api.post('/empleo', values), {
           loading: `Registrando empleo`,
           success: (data) => {
-            //obtenerEmpleosCargando();
+            obtenerEmpleosCargando();
             agregarConsulta(`Se inserto el empleo  ${values.empleo}`);
             return `Empleo insertado con exito`;
           },

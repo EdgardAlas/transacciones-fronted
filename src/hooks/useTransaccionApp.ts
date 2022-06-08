@@ -49,16 +49,16 @@ export const useTransaccionApp = () => {
 
   useEffect(()=>{
     if(transaccionIniciada){
-      //obtenerUsuarios();
-    //obtenerEmpleos();
+      obtenerUsuarios();
+    obtenerEmpleos();
     }
   },[transaccionIniciada])
 
   const terminarTransaccion = () => {
     setTransaccionIniciada(false);
     setConsultas([]);
-    //obtenerUsuarios();
-    //obtenerEmpleos();
+    obtenerUsuarios();
+    obtenerEmpleos();
   };
 
   const commitTransaccion = async () => {

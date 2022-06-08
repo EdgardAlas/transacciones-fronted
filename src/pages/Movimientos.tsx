@@ -138,8 +138,8 @@ export const Movimientos = () => {
               <AgregarMovimiento
                 id={usuario?.id || -1}
                 onAgregar={() => {
-                  //cargarUsuario();
-                  //cargarMovimientos();
+                  cargarUsuario();
+                  cargarMovimientos();
                 }}
               />
             </Col>
