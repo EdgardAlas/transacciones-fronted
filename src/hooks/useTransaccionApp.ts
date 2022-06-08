@@ -47,11 +47,18 @@ export const useTransaccionApp = () => {
     }
   };
 
+  useEffect(()=>{
+    if(transaccionIniciada){
+      //obtenerUsuarios();
+    //obtenerEmpleos();
+    }
+  },[transaccionIniciada])
+
   const terminarTransaccion = () => {
     setTransaccionIniciada(false);
     setConsultas([]);
-    obtenerUsuarios();
-    obtenerEmpleos();
+    //obtenerUsuarios();
+    //obtenerEmpleos();
   };
 
   const commitTransaccion = async () => {
@@ -114,7 +121,14 @@ export const useTransaccionApp = () => {
       const { data } = await api.get<TUsuarios>('/usuarios');
       setUsuarios(data);
       agregarConsulta(`Se selecionaron todos los usuarios`);
-    } catch (error) {}
+    } catch (error) {
+      cancelarTransaccion();
+      return (
+        ((error as AxiosError)?.response?.data as ErrorServidor).mensaje ||
+        ((error as AxiosError).response?.data as ErrorServidor).error?.detail ||
+        'Ha ocurrido un error'
+      );
+    }
   };
 
   const obtenerEmpleos = async () => {
@@ -122,7 +136,14 @@ export const useTransaccionApp = () => {
       const { data } = await api.get<TEmpleo>('/empleos');
       setEmpleos(data);
       agregarConsulta(`Se seleccionaron todos los empleados`);
-    } catch (error) {}
+    } catch (error) {
+      cancelarTransaccion();
+      return (
+        ((error as AxiosError)?.response?.data as ErrorServidor).mensaje ||
+        ((error as AxiosError).response?.data as ErrorServidor).error?.detail ||
+        'Ha ocurrido un error'
+      );
+    }
   };
 
   const obtenerUsuariosCargando = async () => {
@@ -135,7 +156,11 @@ export const useTransaccionApp = () => {
           agregarConsulta('Se seleccionaron todos los usuarios');
           return 'Empleos cargados con exito';
         },
-        error: (data) => 'Ha ocurrido un error al cargar los empleos',
+        error: (data) => {return (
+          (data?.response?.data as ErrorServidor).mensaje ||
+          (data?.response?.data as ErrorServidor).error?.detail ||
+          'Ha ocurrido un error'
+        );},
       });
     } catch (error) {}
   };

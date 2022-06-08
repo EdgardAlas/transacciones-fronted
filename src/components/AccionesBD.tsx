@@ -92,11 +92,11 @@ export const AccionesBD = () => {
         cargarMovimientos();
         cargarUsuario();
       }else if(window.location.href.includes('empleo')){
-      obtenerEmpleos();
+      //obtenerEmpleos();
       }
       else{
-        obtenerEmpleos();
-        obtenerUsuarios();
+        //obtenerEmpleos();
+        //obtenerUsuarios();
       }
       setSavePoint('');
       return;
@@ -105,11 +105,11 @@ export const AccionesBD = () => {
       cargarMovimientos();
       cargarUsuario();
     }else if(window.location.href.includes('empleo')){
-    obtenerEmpleos();
+    //obtenerEmpleos();
     }
     else{
-      obtenerEmpleos();
-      obtenerUsuarios();
+      //obtenerEmpleos();
+      //obtenerUsuarios();
     }
     setSavePoint('');
     rollbackTransaccion();

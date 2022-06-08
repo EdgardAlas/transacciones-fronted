@@ -9,6 +9,7 @@ import { AgregarMovimiento } from '../components/movimientos/AgregarMovimiento';
 import { TablaMovimientos } from '../components/movimientos/TablaMovimientos';
 import { NivelAislamiento } from '../components/NivelAislamiento';
 import { TransaccionIniciada } from '../components/TransaccionIniciada';
+import { AgregarUsuario } from '../components/usuarios/AgregarUsuario';
 import { moneda } from '../helpers/moneda';
 import { notificacion } from '../helpers/notificacion';
 import { useTransaccionContext } from '../hooks/useTransaccionContext';
@@ -52,6 +53,7 @@ export const Movimientos = () => {
       await notificacion(api.get<LMovimientos>(`/movimientos/${id}`), {
         loading: `Obteniendo movimientos`,
         success: ({ data }) => {
+          cargarUsuario();
           setListaMovimentos(data);
           agregarConsulta(
             `Se consultaron los movimientos del usuario con id ${id}`
@@ -136,8 +138,8 @@ export const Movimientos = () => {
               <AgregarMovimiento
                 id={usuario?.id || -1}
                 onAgregar={() => {
-                  cargarUsuario();
-                  cargarMovimientos();
+                  //cargarUsuario();
+                  //cargarMovimientos();
                 }}
               />
             </Col>
