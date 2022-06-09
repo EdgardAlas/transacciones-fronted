@@ -25,6 +25,7 @@ export const TablaUsuarios = () => {
     setUsuarioVer,
     setUsuarioCreando,
     setEditando,
+    cargarAutomaticamente,
   } = useTransaccionContext();
 
   const [show, setShow] = useState(false);
@@ -37,7 +38,9 @@ export const TablaUsuarios = () => {
         loading: 'Eliminando usuario',
         success: () => {
           agregarConsulta(`Se eliminó el usuario con id ${id}`);
-          obtenerUsuariosCargando();
+          if (cargarAutomaticamente) {
+            obtenerUsuariosCargando();
+          }
           return `Se ha eliminado el usuario con id ${id}`;
         },
         error: (error) => {

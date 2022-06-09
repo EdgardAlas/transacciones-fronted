@@ -31,6 +31,7 @@ export const AgregarUsuario = () => {
     agregarConsulta,
     cancelarTransaccion,
     obtenerUsuariosCargando,
+    cargarAutomaticamente,
     usuarioCreando,
     editando,
     setEditando,
@@ -66,7 +67,9 @@ export const AgregarUsuario = () => {
           loading: `Editando usuario ${usuarioCreando.id}`,
           success: (data) => {
             setEditando(false);
-            obtenerUsuariosCargando();
+            if (cargarAutomaticamente) {
+              obtenerUsuariosCargando();
+            }
             agregarConsulta(`Se editó el usuario con id ${usuarioCreando.id}`);
             return `Usuario editado con exito`;
           },
@@ -84,7 +87,9 @@ export const AgregarUsuario = () => {
         await notificacion(api.post('/usuario', values), {
           loading: `Registrando usuario`,
           success: (data) => {
-            obtenerUsuariosCargando();
+            if (cargarAutomaticamente) {
+              obtenerUsuariosCargando();
+            }
             agregarConsulta(
               `Se inserto el usuario con correo ${values.correo}`
             );

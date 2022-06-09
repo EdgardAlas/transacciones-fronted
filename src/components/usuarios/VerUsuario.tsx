@@ -12,7 +12,7 @@ interface Props {
 }
 
 export const VerUsuario = ({ show, close }: Props) => {
-  const { usuarioVer, agregarConsulta, setUsuarioVer } =
+  const { usuarioVer, agregarConsulta, setUsuarioVer, cargarAutomaticamente } =
     useTransaccionContext();
   const [usuario, setUsuario] = useState<Usuario>();
 
@@ -33,10 +33,10 @@ export const VerUsuario = ({ show, close }: Props) => {
   }, [usuarioVer, agregarConsulta, setUsuarioVer]);
 
   useEffect(() => {
-    if (usuarioVer >= 0) {
+    if (usuarioVer >= 0 && cargarAutomaticamente) {
       cargarUsuario();
     }
-  }, [cargarUsuario, usuarioVer]);
+  }, [cargarUsuario, usuarioVer, cargarAutomaticamente]);
 
   return (
     <Modal

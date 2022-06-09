@@ -23,12 +23,12 @@ export const AgregarEmpleo = () => {
     // empleos,
     agregarConsulta,
     cancelarTransaccion,
-    obtenerUsuariosCargando,
     obtenerEmpleosCargando,
     editando,
     setEditando,
     empleoCreando,
     setEmpleoCreando,
+    cargarAutomaticamente,
   } = useTransaccionContext();
 
   useEffect(() => {
@@ -51,7 +51,9 @@ export const AgregarEmpleo = () => {
           loading: `Editando empleo ${empleoCreando.id}`,
           success: (data) => {
             setEditando(false);
-            obtenerEmpleosCargando();
+            if (cargarAutomaticamente) {
+              obtenerEmpleosCargando();
+            }
             agregarConsulta(`Se editó el empleo  ${values.empleo}`);
             return `Empleo editado con exito`;
           },
@@ -69,7 +71,9 @@ export const AgregarEmpleo = () => {
         await notificacion(api.post('/empleo', values), {
           loading: `Registrando empleo`,
           success: (data) => {
-            obtenerEmpleosCargando();
+            if (cargarAutomaticamente) {
+              obtenerEmpleosCargando();
+            }
             agregarConsulta(`Se inserto el empleo  ${values.empleo}`);
             return `Empleo insertado con exito`;
           },

@@ -9,6 +9,7 @@ import {
   PersonWorkspace,
   Plus,
   PlusCircle,
+  Signpost,
   XCircle,
 } from 'react-bootstrap-icons';
 import { Link } from 'react-router-dom';
@@ -52,7 +53,7 @@ export const AgregarUsuarioForm = ({
           label='Dirección'
           placeholder='Dirección'
           name='direccion'
-          icon={<PersonCircle />}
+          icon={<Signpost />}
         />
         <MyInput
           label='Correo'

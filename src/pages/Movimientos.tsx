@@ -1,7 +1,7 @@
 import { AxiosError } from 'axios';
-import { useCallback, useEffect, useState } from 'react';
-import { Col, Row, Spinner } from 'react-bootstrap';
-import { ArrowLeft } from 'react-bootstrap-icons';
+import { useCallback, useEffect } from 'react';
+import { Button, Col, InputGroup, Row, Spinner } from 'react-bootstrap';
+import { ArrowClockwise, ArrowLeft } from 'react-bootstrap-icons';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { api } from '../api';
 import { AccionesBD } from '../components/AccionesBD';
@@ -9,7 +9,6 @@ import { AgregarMovimiento } from '../components/movimientos/AgregarMovimiento';
 import { TablaMovimientos } from '../components/movimientos/TablaMovimientos';
 import { NivelAislamiento } from '../components/NivelAislamiento';
 import { TransaccionIniciada } from '../components/TransaccionIniciada';
-import { AgregarUsuario } from '../components/usuarios/AgregarUsuario';
 import { moneda } from '../helpers/moneda';
 import { notificacion } from '../helpers/notificacion';
 import { useTransaccionContext } from '../hooks/useTransaccionContext';
@@ -21,10 +20,18 @@ import {
 
 export const Movimientos = () => {
   const { id } = useParams();
-  
-  const { agregarConsulta, cancelarTransaccion, usuario, setUsuario,
-    listaMovimientos, setListaMovimentos,
-    cargando, setCargando, } = useTransaccionContext();
+
+  const {
+    agregarConsulta,
+    cancelarTransaccion,
+    usuario,
+    setUsuario,
+    listaMovimientos,
+    setListaMovimentos,
+    cargando,
+    setCargando,
+    cargarAutomaticamente,
+  } = useTransaccionContext();
   const navigate = useNavigate();
 
   const cargarUsuario = useCallback(async () => {
@@ -46,14 +53,16 @@ export const Movimientos = () => {
         'Ha ocurrido un error'
       );
     }
-  }, [agregarConsulta, id, navigate]);
+  }, [agregarConsulta, id, navigate, setCargando, setUsuario]);
 
   const cargarMovimientos = useCallback(async () => {
     try {
       await notificacion(api.get<LMovimientos>(`/movimientos/${id}`), {
         loading: `Obteniendo movimientos`,
         success: ({ data }) => {
-          cargarUsuario();
+          if (cargarAutomaticamente) {
+            cargarUsuario();
+          }
           setListaMovimentos(data);
           agregarConsulta(
             `Se consultaron los movimientos del usuario con id ${id}`
@@ -71,7 +80,14 @@ export const Movimientos = () => {
         },
       });
     } catch (error) {}
-  }, [agregarConsulta, id, cancelarTransaccion]);
+  }, [
+    agregarConsulta,
+    id,
+    cancelarTransaccion,
+    cargarUsuario,
+    setListaMovimentos,
+    cargarAutomaticamente,
+  ]);
 
   useEffect(() => {
     (async () => {
@@ -98,6 +114,7 @@ export const Movimientos = () => {
         );
       }
     })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   return (
@@ -119,27 +136,41 @@ export const Movimientos = () => {
         </div>
       ) : (
         <>
-          <div className='d-flex w-25 flex-column mb-4 gap-2'>
-            <p className='m-0'>
-              <span className='fw-bold'>Nombre:</span>{' '}
-              {` ${usuario?.nombre} ${usuario?.apellido}`}
-            </p>
-            <p className='m-0'>
-              <span className='fw-bold'>Correo:</span> {`${usuario?.correo}`}
-            </p>
-            <p className='m-0'>
-              <span className='fw-bold'>Monto:</span>{' '}
-              {moneda(usuario?.saldo || 0)}
-            </p>
-          </div>
           <TransaccionIniciada />
+
           <Row>
             <Col xs={3}>
+              <div className='d-flex flex-column mb-4 gap-2'>
+                <div>
+                  <InputGroup>
+                    <InputGroup.Text>Recargar usuario</InputGroup.Text>
+                    <Button onClick={cargarUsuario}>
+                      <ArrowClockwise />
+                    </Button>
+                  </InputGroup>
+                </div>
+                <div className='border border-2 p-2 d-flex flex-column gap-2'>
+                  <p className='m-0'>
+                    <span className='fw-bold'>Nombre:</span>{' '}
+                    {` ${usuario?.nombre} ${usuario?.apellido}`}
+                  </p>
+                  <p className='m-0'>
+                    <span className='fw-bold'>Correo:</span>{' '}
+                    {`${usuario?.correo}`}
+                  </p>
+                  <p className='m-0'>
+                    <span className='fw-bold'>Saldo:</span>{' '}
+                    {moneda(usuario?.saldo || 0)}
+                  </p>
+                </div>
+              </div>
               <AgregarMovimiento
                 id={usuario?.id || -1}
                 onAgregar={() => {
-                  cargarUsuario();
-                  cargarMovimientos();
+                  if (cargarAutomaticamente) {
+                    cargarUsuario();
+                    cargarMovimientos();
+                  }
                 }}
               />
             </Col>

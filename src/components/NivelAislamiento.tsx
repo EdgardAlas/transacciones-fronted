@@ -1,11 +1,10 @@
-import { useState } from 'react';
 import { Button, Form } from 'react-bootstrap';
 import { Play } from 'react-bootstrap-icons';
 import { api } from '../api';
 import { useTransaccionContext } from '../hooks/useTransaccionContext';
 
 export const NivelAislamiento = () => {
-  const {aislamiento,setAislamiento} = useTransaccionContext();
+  const { aislamiento, setAislamiento } = useTransaccionContext();
   const { transaccionIniciada, setTransaccionIniciada } =
     useTransaccionContext();
 

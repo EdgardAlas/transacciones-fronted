@@ -15,6 +15,7 @@ export const TablaEmpleo = () => {
     obtenerEmpleosCargando,
     setEmpleoCreando,
     setEditando,
+    cargarAutomaticamente,
   } = useTransaccionContext();
 
   const eliminarEmpleo = async (id: number) => {
@@ -23,7 +24,9 @@ export const TablaEmpleo = () => {
         loading: 'Eliminando empleo',
         success: () => {
           agregarConsulta(`Se eliminó el empleo con id ${id}`);
-          obtenerEmpleosCargando();
+          if (cargarAutomaticamente) {
+            obtenerEmpleosCargando();
+          }
           return `Se ha eliminado el empleo con id ${id}`;
         },
         error: (error) => {

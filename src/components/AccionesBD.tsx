@@ -6,7 +6,6 @@ import {
   Check,
   Check2Circle,
   PlusCircle,
-  Windows,
 } from 'react-bootstrap-icons';
 import toast from 'react-hot-toast';
 import { api } from '../api';
@@ -35,14 +34,20 @@ export const AccionesBD = () => {
     consultas,
     usuario,
     setUsuario,
-    listaMovimientos, setListaMovimentos,
+    setListaMovimentos,
+    cargarAutomaticamente,
+    setCargarAutomaticamente,
   } = useTransaccionContext();
 
   const cargarUsuario = useCallback(async () => {
     try {
-      const { data } = await api.get<Usuario>(`/usuario/${usuario ? usuario.id : ""}`);
+      const { data } = await api.get<Usuario>(
+        `/usuario/${usuario ? usuario.id : ''}`
+      );
 
-      agregarConsulta(`Se consulto el usuario con id ${usuario ? usuario.id : ""}`);
+      agregarConsulta(
+        `Se consulto el usuario con id ${usuario ? usuario.id : ''}`
+      );
 
       setUsuario(data);
     } catch (error) {
@@ -53,31 +58,36 @@ export const AccionesBD = () => {
         'Ha ocurrido un error'
       );
     }
-  }, [agregarConsulta, usuario]);
+  }, [agregarConsulta, usuario, setUsuario]);
 
   const cargarMovimientos = useCallback(async () => {
     try {
-      await notificacion(api.get<LMovimientos>(`/movimientos/${usuario ? usuario.id : ""}`), {
-        loading: `Obteniendo movimientos`,
-        success: ({ data }) => {
-          setListaMovimentos(data);
-          agregarConsulta(
-            `Se consultaron los movimientos del usuario con id ${usuario ? usuario.id : ""}`
-          );
-          return `Movimientos cargados con exito`;
-        },
-        error: (err) => {
-          const error = err as AxiosError;
-          cancelarTransaccion();
-          return (
-            (error?.response?.data as ErrorServidor).mensaje ||
-            (error.response?.data as ErrorServidor).error?.detail ||
-            'Ha ocurrido un error'
-          );
-        },
-      });
+      await notificacion(
+        api.get<LMovimientos>(`/movimientos/${usuario ? usuario.id : ''}`),
+        {
+          loading: `Obteniendo movimientos`,
+          success: ({ data }) => {
+            setListaMovimentos(data);
+            agregarConsulta(
+              `Se consultaron los movimientos del usuario con id ${
+                usuario ? usuario.id : ''
+              }`
+            );
+            return `Movimientos cargados con exito`;
+          },
+          error: (err) => {
+            const error = err as AxiosError;
+            cancelarTransaccion();
+            return (
+              (error?.response?.data as ErrorServidor).mensaje ||
+              (error.response?.data as ErrorServidor).error?.detail ||
+              'Ha ocurrido un error'
+            );
+          },
+        }
+      );
     } catch (error) {}
-  }, [agregarConsulta, usuario, cancelarTransaccion]);
+  }, [agregarConsulta, usuario, cancelarTransaccion, setListaMovimentos]);
 
   const rollbackASavepoint = async () => {
     console.log(savepoint);
@@ -88,29 +98,32 @@ export const AccionesBD = () => {
       setSavePoints((prev) => prev.filter((value, idx) => idx < indice));
 
       agregarConsulta(`Se regresó al punto ${savepoint}`);
-      if(window.location.href.includes('movimientos')){
-        cargarMovimientos();
-        cargarUsuario();
-      }else if(window.location.href.includes('empleo')){
-      obtenerEmpleos();
-      }
-      else{
-        obtenerEmpleos();
-        obtenerUsuarios();
+      if (cargarAutomaticamente) {
+        if (window.location.href.includes('movimientos')) {
+          cargarMovimientos();
+          cargarUsuario();
+        } else if (window.location.href.includes('empleo')) {
+          obtenerEmpleos();
+        } else {
+          obtenerEmpleos();
+          obtenerUsuarios();
+        }
       }
       setSavePoint('');
       return;
     }
-    if(window.location.href.includes('movimientos')){
-      cargarMovimientos();
-      cargarUsuario();
-    }else if(window.location.href.includes('empleo')){
-    obtenerEmpleos();
+    if (cargarAutomaticamente) {
+      if (window.location.href.includes('movimientos')) {
+        cargarMovimientos();
+        cargarUsuario();
+      } else if (window.location.href.includes('empleo')) {
+        obtenerEmpleos();
+      } else {
+        obtenerEmpleos();
+        obtenerUsuarios();
+      }
     }
-    else{
-      obtenerEmpleos();
-      obtenerUsuarios();
-    }
+
     setSavePoint('');
     rollbackTransaccion();
   };
@@ -141,6 +154,15 @@ export const AccionesBD = () => {
   return (
     <div className='mt-4 d-flex align-items-center gap-4 justify-content-center'>
       <div className='d-flex align-items-start gap-2'>
+        <div>
+          <label>Selects automaticos</label>
+          <Form.Check
+            type={'switch'}
+            checked={cargarAutomaticamente}
+            onChange={(e) => setCargarAutomaticamente(e.target.checked)}
+          />
+        </div>
+        <div className='vr'></div>
         <div>
           <label>Savepoint</label>
           <Form.Control

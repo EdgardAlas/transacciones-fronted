@@ -16,7 +16,6 @@ export const useTransaccionApp = () => {
   const [usuario, setUsuario] = useState<Usuario>();
   const [listaMovimientos, setListaMovimentos] = useState<LMovimientos>([]);
   const [cargando, setCargando] = useState<boolean>(true);
-
   const [aislamiento, setAislamiento] = useState('READ COMMITTED');
   const [consultas, setConsultas] = useState<string[]>([]);
   const [usuarios, setUsuarios] = useState<TUsuarios>([]);
@@ -47,18 +46,35 @@ export const useTransaccionApp = () => {
     }
   };
 
-  useEffect(()=>{
-    if(transaccionIniciada){
-      obtenerUsuarios();
-    obtenerEmpleos();
+  // useEffect(() => {
+  //   if (transaccionIniciada && cargarAutomaticamente) {
+  //     obtenerUsuarios();
+  //     obtenerEmpleos();
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [transaccionIniciada]);
+  useEffect(() => {
+    if (!transaccionIniciada) {
+      setConsultas([]);
     }
-  },[transaccionIniciada])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [transaccionIniciada]);
+
+  useEffect(() => {
+    if (!transaccionIniciada && cargarAutomaticamente) {
+      obtenerEmpleos();
+      obtenerUsuarios();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [transaccionIniciada]);
 
   const terminarTransaccion = () => {
     setTransaccionIniciada(false);
     setConsultas([]);
-    obtenerUsuarios();
-    obtenerEmpleos();
+    // if (cargarAutomaticamente) {
+    //   obtenerUsuarios();
+    //   obtenerEmpleos();
+    // }
   };
 
   const commitTransaccion = async () => {
@@ -156,11 +172,13 @@ export const useTransaccionApp = () => {
           agregarConsulta('Se seleccionaron todos los usuarios');
           return 'Empleos cargados con exito';
         },
-        error: (data) => {return (
-          (data?.response?.data as ErrorServidor).mensaje ||
-          (data?.response?.data as ErrorServidor).error?.detail ||
-          'Ha ocurrido un error'
-        );},
+        error: (data) => {
+          return (
+            (data?.response?.data as ErrorServidor).mensaje ||
+            (data?.response?.data as ErrorServidor).error?.detail ||
+            'Ha ocurrido un error'
+          );
+        },
       });
     } catch (error) {}
   };
@@ -183,10 +201,12 @@ export const useTransaccionApp = () => {
 
   useEffect(() => {
     obtenerUsuarios();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     obtenerEmpleos();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return {
@@ -225,9 +245,12 @@ export const useTransaccionApp = () => {
     setEmpleoCreando,
     aislamiento,
     setAislamiento,
-    usuario, setUsuario,
-    listaMovimientos, setListaMovimentos,
-    cargando, setCargando,
+    usuario,
+    setUsuario,
+    listaMovimientos,
+    setListaMovimentos,
+    cargando,
+    setCargando,
   };
 };
 
